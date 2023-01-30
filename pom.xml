@@ -22,7 +22,7 @@
 
     <groupId>com.github.lepoitr.kafka.connect.smt</groupId>
     <artifactId>DropNulls</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>

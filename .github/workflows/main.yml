@@ -37,9 +37,17 @@ jobs:
         - uses: actions/setup-java@v1
           with:
             java-version: 17
+            
+
+        - name: Extract Maven project version
+          run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)"   >> $GITHUB_OUTPUT
+          id: project
+
+        - name: Show extracted Maven project version
+          run: echo ${{ steps.project.outputs.version }}
+
         - run: mvn -B package --file pom.xml -DskipTests
-        - run: mkdir staging && cp target/DropNulls-*.jar staging
         - uses: actions/upload-artifact@v1
           with:
-            name: Package
-            path: staging
+            name: DropNulls-${{ steps.project.outputs.version }}
+            path: stagingtarget/DropNulls-${{ steps.project.outputs.version }}.jar

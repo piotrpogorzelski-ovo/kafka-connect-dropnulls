@@ -56,12 +56,13 @@ public abstract class DropNulls<R extends ConnectRecord<R>> implements Transform
 
   private static final String PURPOSE = "verbosesity: 0 - warn/error only, 1+ - processing info";
 
-  private int verbose;
+  private int verbose = 0;
 
   @Override
   public void configure(Map<String, ?> props) {
     final SimpleConfig config = new SimpleConfig(CONFIG_DEF, props);
     verbose = config.getInt(ConfigName.DROPNULLS_VERBOSE);
+    log.info("DropNulls SMT configured with verbose=[{}].",verbose);
   }
 
 
@@ -82,12 +83,12 @@ public abstract class DropNulls<R extends ConnectRecord<R>> implements Transform
 
 private Boolean isNullOrEmpty(Field field, Object fieldvalue){
   if(fieldvalue == null){
-    log.info("{} skipped - value is null",field);
+    if (verbose > 0) log.info("{} skipped - value is null",field);
     
   }else if(field.schema().type().equals(Schema.Type.ARRAY)){
         List<Object> al = (List<Object>)fieldvalue;
         if (al.size() == 0) {
-	  if (verbose > 0) log.info("{} skipped - empty array",field);
+	        if (verbose > 0) log.info("{} skipped - empty array",field);
         
         }else{
           if (verbose > 0) log.info("{} not empy array ",field);
@@ -155,7 +156,7 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
 
       for (Field field: updatedSchema.fields()) {
 
-        log.info("{} added",field);
+        if (verbose > 0) log.info("{} added",field);
         
         updatedValue.put(field.name(), newValues.get(field.name()));  
     }
@@ -172,7 +173,7 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
    
     for (Field field: value.schema().fields()) {
       if(value.get(field) != null){    
-        log.info("{}not null",field);
+        if (verbose > 0) log.info("{}not null",field);
         builder.field(field.name(), field.schema());
 
       }else{
@@ -184,7 +185,7 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
 
       final Struct updatedValue = new Struct(updatedSchema);
       for (Field field: updatedSchema.fields()) {
-        log.info("{} added",field);
+        if (verbose > 0) log.info("{} added",field);
         
         updatedValue.put(field.name(), value.get(field.name()));  
     }

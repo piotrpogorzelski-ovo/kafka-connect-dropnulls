@@ -71,7 +71,7 @@ public abstract class DropNulls<R extends ConnectRecord<R>> implements Transform
     if (operatingSchema(record) == null) {
       return applySchemaless(record);
     } else {
-      return applyWithSchema(record);
+      return applyWithSchemaRecursive(record);
     }
   }
 
@@ -135,7 +135,7 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
   return retVal;
 }
 
-  public R applyWithSchema2(R record) {
+  public R applyWithSchemaRecursive(R record) {
     final Struct value = requireStruct(operatingValue(record), PURPOSE);
 
    

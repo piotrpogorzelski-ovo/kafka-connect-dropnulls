@@ -62,7 +62,7 @@ public abstract class DropNulls<R extends ConnectRecord<R>> implements Transform
   public void configure(Map<String, ?> props) {
     final SimpleConfig config = new SimpleConfig(CONFIG_DEF, props);
     verbose = config.getInt(ConfigName.DROPNULLS_VERBOSE);
-    log.info("DropNulls SMT configured with verbose=[{}].",verbose);
+    log.info("DropNulls SMT configured with verbose={}.",verbose);
   }
 
 
@@ -71,7 +71,7 @@ public abstract class DropNulls<R extends ConnectRecord<R>> implements Transform
     if (operatingSchema(record) == null) {
       return applySchemaless(record);
     } else {
-      return applyWithSchema(record);
+      return applyWithSchemaRecursive(record);
     }
   }
 
@@ -127,7 +127,6 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
     }
   }else{
     if( ! isNullOrEmpty(field, fieldValue) ){
-    //if( isNullorEmpty( field, value.get(field) ) {
       builder.field(field.name(), field.schema());
       retVal = fieldValue;
     }
@@ -135,7 +134,7 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
   return retVal;
 }
 
-  public R applyWithSchema2(R record) {
+  public R applyWithSchemaRecursive(R record) {
     final Struct value = requireStruct(operatingValue(record), PURPOSE);
 
    
@@ -173,11 +172,11 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
    
     for (Field field: value.schema().fields()) {
       if(value.get(field) != null){    
-        if (verbose > 0) log.info("{}not null",field);
+        if (verbose > 0) log.info("{} not null",field);
         builder.field(field.name(), field.schema());
 
       }else{
-        log.info("{} null -should be skipped",field);
+        if (verbose > 0) log.info("{} null -should be skipped",field);
       }
     }
 

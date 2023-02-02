@@ -127,7 +127,6 @@ private Object addIfNullOrEmpty(SchemaBuilder builder, Field field,Object fieldV
     }
   }else{
     if( ! isNullOrEmpty(field, fieldValue) ){
-    //if( isNullorEmpty( field, value.get(field) ) {
       builder.field(field.name(), field.schema());
       retVal = fieldValue;
     }
